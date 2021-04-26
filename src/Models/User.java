@@ -11,17 +11,21 @@ package Models;
  */
 public class User {
     
-    private final Integer userId;
+    private final int userId;
     private final String username;
-    private final Integer wins;
+    private final int wins;
 
-    public User(Integer userId, String username, Integer wins) {
+    public User(int userId, String username, int wins) {
         this.userId = userId;
         this.username = username;
         this.wins = wins;
     }
+    
+    public User(int userId, String username){
+        this(userId, username, 0);
+    }
 
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 
@@ -29,7 +33,7 @@ public class User {
         return username;
     }
 
-    public Integer getWins() {
+    public int getWins() {
         return wins;
     }
     
