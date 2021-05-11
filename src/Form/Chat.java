@@ -215,7 +215,8 @@ public class Chat extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void btn21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn21ActionPerformed
-        JOptionPane.showMessageDialog(this, "Função ainda não implementada");        // TODO add your handling code here:
+        Jogo21 jogo21 = new Jogo21(usuarioLogado);
+        jogo21.start();
     }//GEN-LAST:event_btn21ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

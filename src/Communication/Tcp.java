@@ -5,6 +5,10 @@
  */
 package Communication;
 
+import Models.Card;
+import Models.Naipe;
+import Models.Player;
+import Models.StatusPlayer;
 import Models.User;
 import Models.UserLogado;
 import java.io.BufferedReader;
@@ -99,6 +103,93 @@ public class Tcp {
             System.out.println(e.getMessage());
         }
         return "";
+    }
+    
+    public List<Player> getPlayers(UserLogado userLogado) {
+        try {
+            //System.setProperty("java.net.preferIPv6Addresses", "true");
+            Socket sock = new Socket("larc.inf.furb.br", 1012);
+
+            PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
+            String request = "GET PLAYERS " + userLogado.getUserId() + ":" + userLogado.getUsername() + "\r\n";
+            out.println(request);
+            InputStreamReader s = new InputStreamReader(sock.getInputStream());
+            BufferedReader rec = new BufferedReader(s);
+
+            String response = rec.readLine();
+
+            String[] playersResponse = response.split(":");
+
+            List<Player> players = new ArrayList();
+
+            for (int i = 0; i < playersResponse.length; i = i + 2) {
+                Integer id = Integer.parseInt(playersResponse[i]);
+                StatusPlayer status = StatusPlayer.valueOf(playersResponse[i + 1]);
+
+                Player newPlayer = new Player(id, status);
+
+                players.add(newPlayer);
+            }
+
+            sock.close();
+            
+            return players;
+        } catch (UnknownHostException e) {
+
+        } catch (IOException e) {
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new ArrayList();
+    }
+    
+    public Card getCard(UserLogado userLogado) {
+        try {
+            //System.setProperty("java.net.preferIPv6Addresses", "true");
+            Socket sock = new Socket("larc.inf.furb.br", 1012);
+
+            PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
+            String request = "GET CARD " + userLogado.getUserId() + ":" + userLogado.getUsername() + "\r\n";
+            out.println(request);
+            InputStreamReader s = new InputStreamReader(sock.getInputStream());
+            BufferedReader rec = new BufferedReader(s);
+
+            String response = rec.readLine();
+
+            String[] cardResponse = response.split(":");
+
+            int numero = 0;
+            switch(cardResponse[0]) {
+                case "A":
+                    numero = 1;
+                    break;
+                case "J":
+                case "Q":
+                case "K":
+                    numero = 10;
+                    break;
+                default:
+                    numero = Integer.parseInt(cardResponse[0]);
+                    break;
+            }
+            
+            Naipe naipe = Naipe.valueOf(cardResponse[1]);
+            Card card = new Card(numero, naipe);
+
+            sock.close();
+            
+            return card;
+        } catch (UnknownHostException e) {
+
+        } catch (IOException e) {
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 
 }

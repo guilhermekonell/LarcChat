@@ -16,8 +16,8 @@ public class Login extends javax.swing.JFrame {
 
     public Login() {
         initComponents();
-        this.txtLogin.setText("6399");
-        this.txtSenha.setText("ldbtk");
+        this.txtLogin.setText("7636");
+        this.txtSenha.setText("qmftc");
     }
 
     @SuppressWarnings("unchecked")

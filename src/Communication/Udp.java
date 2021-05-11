@@ -5,6 +5,7 @@
  */
 package Communication;
 
+import Models.MsgGame;
 import Models.UserLogado;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -41,4 +42,29 @@ public class Udp {
             System.out.println(e.getMessage());
         }
     }
+    
+    public void sendGame(UserLogado userLogado, MsgGame mensagem) {
+        try {
+            StringBuilder messageBuilder = new StringBuilder("SEND GAME ");
+            messageBuilder.append(userLogado.getUserId());
+            messageBuilder.append(":");
+            messageBuilder.append(userLogado.getUsername());
+            messageBuilder.append(":");
+            messageBuilder.append(mensagem);
+            byte[] s = new byte[messageBuilder.toString().length()];
+            s = messageBuilder.toString().getBytes();
+            InetAddress ip = InetAddress.getByName("larc.inf.furb.br");
+            DatagramPacket pack = new DatagramPacket(s, s.length, ip, 1011);
+
+            // Cria um socket UDP e envia o pacote para 'localhost:8000'
+            DatagramSocket socket = new DatagramSocket();
+            socket.send(pack);
+
+            // Encerra o socket
+            socket.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
 }
