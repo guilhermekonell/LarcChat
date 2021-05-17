@@ -7,35 +7,72 @@ package Form;
 
 import Communication.Tcp;
 import Communication.Udp;
+import Main.Util;
+import Models.Card;
 import Models.MsgGame;
 import Models.Player;
 import Models.UserLogado;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
  * @author guiri
  */
 public class Jogo21 extends javax.swing.JFrame {
-    
+
     private final UserLogado usuarioLogado;
     private final Udp udp;
     private final Tcp tcp;
     private List<Player> players;
+    private HashMap<String, ImageIcon> listaCardsImagens;
+    private List<Card> cartas;
 
     /**
      * Creates new form Jogo21
      */
     public Jogo21(UserLogado usuarioLogado) {
         initComponents();
+        Util util = new Util();
+        listaCardsImagens = util.setarCardsLista();
         this.usuarioLogado = usuarioLogado;
         udp = new Udp();
         tcp = new Tcp();
+        setVisibleButtons(true);
+        cartas = new ArrayList<>();
     }
-    
+
     public void start() {
         setVisible(true);
         setLocationRelativeTo(null);
+    }
+
+    private void setVisibleButtons(boolean value) {
+        jButton1.setVisible(value);//participar
+        btnObterCard.setVisible(!value);//obter card
+        jButton2.setVisible(!value);//sair
+    }
+
+    public void setarMensagemTela(String mensagem) {
+        txt21.append("\n" + mensagem);
+        jButton3.doClick();
+        setVisibleButtons(true);
+    }
+
+    public void setarCardTela(Card card) {
+        ImageIcon image = listaCardsImagens.get(card.getNumero() + card.getNaipe().name().substring(0, 1));
+        ImageIcon imageIcon = new ImageIcon(image.getImage().getScaledInstance(100, 200, Image.SCALE_DEFAULT));
+        if (cartas.size() == 1) {
+            carta1.setIcon(imageIcon);
+        } else if (cartas.size() == 2) {
+            carta2.setIcon(imageIcon);
+        } else if (cartas.size() == 3) {
+            carta3.setIcon(imageIcon);
+        }
     }
 
     /**
@@ -50,6 +87,12 @@ public class Jogo21 extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        btnObterCard = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txt21 = new javax.swing.JTextArea();
+        carta1 = new javax.swing.JLabel();
+        carta2 = new javax.swing.JLabel();
+        carta3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -74,16 +117,43 @@ public class Jogo21 extends javax.swing.JFrame {
             }
         });
 
+        btnObterCard.setText("Obter carta");
+        btnObterCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnObterCardActionPerformed(evt);
+            }
+        });
+
+        txt21.setColumns(20);
+        txt21.setRows(5);
+        jScrollPane1.setViewportView(txt21);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(313, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(carta1)
+                                .addGap(93, 93, 93)
+                                .addComponent(carta2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 185, Short.MAX_VALUE)
+                                .addComponent(btnObterCard)
+                                .addGap(157, 157, 157)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(carta3)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -92,10 +162,19 @@ public class Jogo21 extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(btnObterCard))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addContainerGap(208, Short.MAX_VALUE))
+                .addGap(65, 65, 65)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(carta1)
+                    .addComponent(carta2)
+                    .addComponent(carta3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -104,6 +183,11 @@ public class Jogo21 extends javax.swing.JFrame {
     private void btnParticiparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParticiparActionPerformed
         udp.sendGame(usuarioLogado, MsgGame.ENTER);
         players = tcp.getPlayers(usuarioLogado);
+        setVisibleButtons(false);
+        carta1.setIcon(null);
+        carta2.setIcon(null);
+        carta3.setIcon(null);
+        cartas.clear();
     }//GEN-LAST:event_btnParticiparActionPerformed
 
     private void btnPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPararActionPerformed
@@ -116,9 +200,33 @@ public class Jogo21 extends javax.swing.JFrame {
         players = tcp.getPlayers(usuarioLogado);
     }//GEN-LAST:event_btnSairActionPerformed
 
+    private void btnObterCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnObterCardActionPerformed
+
+        Card card = tcp.getCard(usuarioLogado);
+        players = tcp.getPlayers(usuarioLogado);
+        if (card != null) {
+            
+            if (players.size() > 0) {
+                if (cartas.size() == 3) {
+                    cartas.clear();
+                }
+                cartas.add(card);
+                txt21.append("Status jogador " + players.get(0).getUserId() + " é " + players.get(0).getStatus().name());
+                txt21.setText("\nObteve a carta " + card.getNumero());
+                setarCardTela(card);
+            }
+        }
+    }//GEN-LAST:event_btnObterCardActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnObterCard;
+    private javax.swing.JLabel carta1;
+    private javax.swing.JLabel carta2;
+    private javax.swing.JLabel carta3;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea txt21;
     // End of variables declaration//GEN-END:variables
 }

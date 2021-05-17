@@ -104,7 +104,7 @@ public class Tcp {
         }
         return "";
     }
-    
+
     public List<Player> getPlayers(UserLogado userLogado) {
         try {
             //System.setProperty("java.net.preferIPv6Addresses", "true");
@@ -132,7 +132,7 @@ public class Tcp {
             }
 
             sock.close();
-            
+
             return players;
         } catch (UnknownHostException e) {
 
@@ -144,7 +144,7 @@ public class Tcp {
 
         return new ArrayList();
     }
-    
+
     public Card getCard(UserLogado userLogado) {
         try {
             //System.setProperty("java.net.preferIPv6Addresses", "true");
@@ -157,30 +157,32 @@ public class Tcp {
             BufferedReader rec = new BufferedReader(s);
 
             String response = rec.readLine();
+            if (!response.equals(":")) {
 
-            String[] cardResponse = response.split(":");
+                String[] cardResponse = response.split(":");
 
-            int numero = 0;
-            switch(cardResponse[0]) {
-                case "A":
-                    numero = 1;
-                    break;
-                case "J":
-                case "Q":
-                case "K":
-                    numero = 10;
-                    break;
-                default:
-                    numero = Integer.parseInt(cardResponse[0]);
-                    break;
+                int numero = 0;
+                switch (cardResponse[0]) {
+                    case "A":
+                        numero = 1;
+                        break;
+                    case "J":
+                    case "Q":
+                    case "K":
+                        numero = 10;
+                        break;
+                    default:
+                        numero = Integer.parseInt(cardResponse[0]);
+                        break;
+                }
+
+                Naipe naipe = Naipe.valueOf(cardResponse[1]);
+                Card card = new Card(numero, naipe);
+
+                sock.close();
+
+                return card;
             }
-            
-            Naipe naipe = Naipe.valueOf(cardResponse[1]);
-            Card card = new Card(numero, naipe);
-
-            sock.close();
-            
-            return card;
         } catch (UnknownHostException e) {
 
         } catch (IOException e) {
@@ -188,7 +190,7 @@ public class Tcp {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
+        System.out.println("Não achou carta");
         return null;
     }
 

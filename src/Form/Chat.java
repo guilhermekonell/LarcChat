@@ -25,6 +25,7 @@ public class Chat extends javax.swing.JFrame {
     private final String col[] = {"ID", "Nome"};
     private final DefaultListModel listModel;
     private List<User> listaUsuarios;
+    Jogo21 jogo21;
 
     public Chat(UserLogado usuarioLogado) {
         initComponents();
@@ -69,7 +70,11 @@ public class Chat extends javax.swing.JFrame {
                 while (true) {
                     String mensagem = tcp.getMessages(usuarioLogado);
                     if (!mensagem.equals("") && !mensagem.equals(":")) {
-                        txtMensagens.append(getMensagemFormatada(mensagem) + "\n");
+                        if (mensagem.contains("vencedor") && jogo21 != null) {
+                            jogo21.setarMensagemTela(mensagem);
+                        } else {
+                            txtMensagens.append(getMensagemFormatada(mensagem) + "\n");
+                        }
                     }
 
                     try {
@@ -215,7 +220,7 @@ public class Chat extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void btn21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn21ActionPerformed
-        Jogo21 jogo21 = new Jogo21(usuarioLogado);
+        jogo21 = new Jogo21(usuarioLogado);
         jogo21.start();
     }//GEN-LAST:event_btn21ActionPerformed
 
