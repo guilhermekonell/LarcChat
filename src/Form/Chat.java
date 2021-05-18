@@ -71,8 +71,8 @@ public class Chat extends javax.swing.JFrame {
                     String mensagem = tcp.getMessages(usuarioLogado);
                     if (!mensagem.equals("") && !mensagem.equals(":")) {
                         if (mensagem.contains("vencedor") && jogo21 != null) {
-                            jogo21.setarMensagemTela(mensagem);
-                        } else {
+                            jogo21.setarMensagemTela(getMensagemFormatada(mensagem));
+                        } else if (!mensagem.contains("vencedor")) {
                             txtMensagens.append(getMensagemFormatada(mensagem) + "\n");
                         }
                     }
@@ -93,9 +93,13 @@ public class Chat extends javax.swing.JFrame {
         String[] mensagemSeparada = response.split(":");
         for (int i = 0; i < mensagemSeparada.length; i = i + 2) {
             id = Integer.parseInt(mensagemSeparada[i]);
-            for (User user : listaUsuarios) {
-                if (user.getUserId() == id) {
-                    mensagem.append(user.getUsername()).append(":");
+            if (id == 0) {
+                mensagem.append("Servidor: ");
+            } else {
+                for (User user : listaUsuarios) {
+                    if (user.getUserId() == id) {
+                        mensagem.append(user.getUsername()).append(": ");
+                    }
                 }
             }
             mensagem.append(mensagemSeparada[i + 1]);
